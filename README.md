@@ -38,6 +38,47 @@ hour | avg_points
 22|10.386
 23|10.090
 
+Number of users who have made atleast *n* comments, and the average point score for the *n*th comment a user makes:
+
+	SELECT nth_comment, COUNT(num_points) AS users_who_made_num_comments, AVG(num_points) AS avg_points
+	FROM (
+		SELECT num_points,
+		ROW_NUMBER() OVER (PARTITION BY author ORDER BY created_at ASC) AS nth_comment
+		FROM hn_comments
+		WHERE num_points IS NOT NULL
+	) AS foo
+	WHERE nth_comment <= 25
+	GROUP BY nth_comment
+	ORDER BY nth_comment
+
+nth_comment | users_who_made_num_comments | avg_points
+--- | --- | ---
+1|159410|2.432
+2|99599|2.474
+3|79467|2.550
+4|68525|2.620
+5|60921|2.648
+6|55477|2.681
+7|51091|2.685
+8|47522|2.764
+9|44498|2.795
+10|41998|2.827
+11|39931|2.869
+12|37992|2.862
+13|36282|2.820
+14|34770|2.886
+15|33403|2.937
+16|32195|2.916
+17|31073|2.903
+18|30070|2.978
+19|29126|2.950
+20|28217|2.968
+21|27372|2.950
+22|26619|2.975
+23|25949|3.044
+24|25295|3.017
+25|24651|3.040
+
 Create the [Hacker News leaderboard](https://news.ycombinator.com/leaders) of users with the most karma, the hard way. (note that aggregated karma values will differ from true values due to vote obfuscation, among other things):
 
 	SELECT author, SUM(num_points) - COUNT(num_points) AS karma
@@ -80,47 +121,6 @@ wglb|30763
 aaronbrethorst|30220
 raganwald|29993
 anigbrowl|29875
-
-Number of users who make *n* comments, and the average point score for the *n*th comment a user makes:
-
-	SELECT nth_comment, COUNT(num_points) AS users_who_made_num_comments, AVG(num_points) AS avg_points
-	FROM (
-		SELECT num_points,
-		ROW_NUMBER() OVER (PARTITION BY author ORDER BY created_at ASC) AS nth_comment
-		FROM hn_comments
-		WHERE num_points IS NOT NULL
-	) AS foo
-	WHERE nth_comment <= 25
-	GROUP BY nth_comment
-	ORDER BY nth_comment
-
-nth_comment | users_who_made_num_comments | avg_points
---- | --- | ---
-1|159410|2.432
-2|99599|2.474
-3|79467|2.550
-4|68525|2.620
-5|60921|2.648
-6|55477|2.681
-7|51091|2.685
-8|47522|2.764
-9|44498|2.795
-10|41998|2.827
-11|39931|2.869
-12|37992|2.862
-13|36282|2.820
-14|34770|2.886
-15|33403|2.937
-16|32195|2.916
-17|31073|2.903
-18|30070|2.978
-19|29126|2.950
-20|28217|2.968
-21|27372|2.950
-22|26619|2.975
-23|25949|3.044
-24|25295|3.017
-25|24651|3.040
 
 # Known Data Fidelity Caveats
 
