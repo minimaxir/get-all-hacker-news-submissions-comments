@@ -1,4 +1,22 @@
-Simple Python scripts to download all Hacker News submissions and comments and store them in a PostgreSQL database, for use in ad-hoc data analysis. These scripts are optimized from the scripts used to gather data for my October 2014 blog post [The Quality, Popularity, and Negativity of 5.6 Million Hacker News Comments](http://minimaxir.com/2014/10/hn-comments-about-comments/). Parameters for connecting to the appropriate PostgreSQL database are set at the beginning of each file.
+**UPDATE August 7th, 2017**: All Hacker News submissions [are now available](https://cloud.google.com/bigquery/public-data/hacker-news) on BigQuery, and the dataset is updated daily. If you are scraping Hacker News data at scale, it may be more efficient to use BigQuery instead.
+
+An example query to get the top 2,000 Hacker News submissions:
+
+```sql
+#standardSQL
+SELECT title, score
+FROM `bigquery-public-data.hacker_news.full`
+WHERE type = 'story'
+ORDER BY score DESC
+LIMIT 2000
+```
+
+The web interface can only download up to 10,000 titles; you'll need to use an API to get more.
+
+---
+
+
+This repository contains simple Python scripts to download all Hacker News submissions and comments and store them in a PostgreSQL database, for use in ad-hoc data analysis. These scripts are optimized from the scripts used to gather data for my October 2014 blog post [The Quality, Popularity, and Negativity of 5.6 Million Hacker News Comments](http://minimaxir.com/2014/10/hn-comments-about-comments/). Parameters for connecting to the appropriate PostgreSQL database are set at the beginning of each file.
 
 This script uses the older [Algolia API](https://hn.algolia.com/api) for Hacker News (instead of the [official HN API](https://github.com/HackerNews/API)) due to its support for bulk requests and comment scores for most comments. Run-time of downloading and processing all Hacker News submissions is about 2 hours; run-time of downloading and processing all Hacker News comments is about 11 hours.
 
